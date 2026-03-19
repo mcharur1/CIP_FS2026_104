@@ -71,4 +71,18 @@ print(df.dtypes) # all date types are correct for the variable they represent.
 # canton_name                  str
 # canton_gdp               float64
 
+# Check missing values
+print("Missing values before cleaning:")
+print(df.isna().sum())
+# No missing values found in key variables (canton, price_chf, canton_gdp)
+# Therefore, no row deletion or merge correction was necessary
 
+# Handle missing values
+for col in ['living_area_m2', 'rooms']:
+    df[col] = df.groupby('canton')[col].transform(lambda x: x.fillna(x.median()))
+    df[col] = df[col].fillna(df[col].median())
+
+print(df.isna().sum())
+# Missing values in living_area_m2 and rooms were imputed using the median per canton to account for regional differences.
+# Remaining missing values were filled using the overall median.
+# Missing values in location_text were not treated, as this variable is not relevant for the analysis.
